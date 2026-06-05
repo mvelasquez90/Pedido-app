@@ -66,7 +66,8 @@ export default function ProductItem({
             height: 26,
             padding: "2px 4px",
             borderRadius: 6,
-            fontSize: 12
+            fontSize: 12,
+            boxSizing: "border-box"
           }}
         />
       ) : (
@@ -89,7 +90,8 @@ export default function ProductItem({
           onChange={(e) => setEditCategoria(e.target.value)}
           style={{
             height: 26,
-            fontSize: 12
+            fontSize: 12,
+            boxSizing: "border-box"
           }}
         >
           <option value="alimentos">🍎</option>
@@ -111,6 +113,7 @@ export default function ProductItem({
     padding: 2,
     textAlign: "center",
     borderRadius: 6,
+    boxSizing: "border-box",
     border:
       theme.background === "#121212"
         ? "1px solid rgba(255,255,255,0.1)"
@@ -141,9 +144,8 @@ style={{
   height: 26,
   padding: "2px 6px",
   borderRadius: 6,
-
-
-    border:
+  boxSizing: "border-box",
+  border:
       theme.background === "#121212"
         ? "1px solid rgba(255,255,255,0.1)"
         : "1px solid rgba(0,0,0,0.15)",
@@ -169,7 +171,8 @@ style={{
           style={{
             display: "flex",
             gap: 4,
-            marginLeft: "auto"
+            marginLeft: "auto",
+            overflow: "hidden",
           }}
         >
           <button

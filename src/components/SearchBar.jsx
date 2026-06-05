@@ -43,7 +43,8 @@ export default function SearchBar({ value, onChange }) {
           boxSizing: "border-box",
           outline: "none",
           fontSize: 14,
-          transition: "box-shadow 0.2s ease"
+          transition: "box-shadow 0.2s ease",
+          boxSizing: "border-box"
         }}
       />
 

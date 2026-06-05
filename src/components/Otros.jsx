@@ -74,7 +74,10 @@ async function contarListas() {
             gap: 6,
             marginBottom: 6,
             overflow: "hidden",
-            alignItems: "center",
+            alignItems: "center",             
+            flexWrap: "nowrap",
+            overflow: "hidden",
+
 
             // ✅ ANIMACIÓN ELIMINAR
             transition: "all 0.2s ease",
@@ -127,16 +130,23 @@ async function contarListas() {
           </button>
 
           {/* Nombre */}
-          <input
-            placeholder="Producto"
-            value={o.nombre}
-            onChange={(e) => actualizar(i, "nombre", e.target.value)}
-            style={{
-              padding: "3px 6px",
-              borderRadius: 6,
-              fontSize: 13
-            }}
-          />
+          
+<input
+  placeholder="Producto"
+  value={o.nombre}
+  onChange={(e) => actualizar(i, "nombre", e.target.value)}
+  style={{
+    minWidth: 70,       // ✅ no demasiado pequeño
+    maxWidth: 110,      // ✅ evita que empuje todo
+    flex: "0 0 auto",   // ✅ no se expande
+
+    padding: "3px 6px",
+    borderRadius: 6,
+    fontSize: 13,
+    boxSizing: "border-box"
+  }}
+/>
+
 
           {/* Cantidad */}
           <input
@@ -149,7 +159,8 @@ async function contarListas() {
               width: 45,
               padding: 3,
               borderRadius: 6,
-              fontSize: 13
+              fontSize: 13,
+              boxSizing: "border-box"
             }}
           />
 
@@ -162,11 +173,12 @@ async function contarListas() {
             }
             style={{
               flex: 1,
-              minWidth: 80,
-              maxWidth: 160,
+              minWidth: 60,
+              maxWidth: 140,
               padding: "3px 6px",
               borderRadius: 6,
-              fontSize: 13
+              fontSize: 13,
+              boxSizing: "border-box"
             }}
           />
 
