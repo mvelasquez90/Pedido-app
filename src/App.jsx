@@ -562,7 +562,15 @@ function generarTexto() {
 
 
 function enviarLista(lista) {
-  const texto = generarTextoLista(lista.items);
+  
+const itemsNormalizados = lista.items.map(i => ({
+  producto: i.producto,
+  cantidad: i.cantidad || 1,
+  comentario: i.comentario || ""
+}));
+
+const texto = generarTextoLista(itemsNormalizados);
+
 
   window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`);
 }
@@ -608,12 +616,26 @@ function generarPDFLista(lista) {
   let y2 = y;
 
   col1.forEach(i => {
-    doc.text(`- ${i.producto} x${i.cantidad}`, x1, y1);
+    
+const linea =
+  i.comentario && i.comentario.trim() !== ""
+    ? `- ${i.producto} x${i.cantidad} (${i.comentario})`
+    : `- ${i.producto} x${i.cantidad}`;
+
+doc.text(linea, x1, y1);
+
     y1 += lineHeight;
   });
 
   col2.forEach(i => {
-    doc.text(`- ${i.producto} x${i.cantidad}`, x2, y2);
+    
+const linea =
+  i.comentario && i.comentario.trim() !== ""
+    ? `- ${i.producto} x${i.cantidad} (${i.comentario})`
+    : `- ${i.producto} x${i.cantidad}`;
+
+doc.text(linea, x2, y2);
+
     y2 += lineHeight;
   });
 
