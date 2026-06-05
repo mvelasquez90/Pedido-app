@@ -549,51 +549,44 @@ function generarPDFLista(lista) {
 
   const { alimentos, limpieza, otros } = agruparItemsPDF(lista.items);
 
-  function renderCategoria(titulo, items) {
-    if (!items.length) return;
+ function renderCategoria(titulo, items) {
+  if (!items.length) return;
+   items.sort((a, b) => 
+    a.producto.localeCompare(b.producto, 'es', { sensitivity: 'base' })
+  );
 
-    let col = 0; // 0 = izquierda, 1 = derecha
-    let x = marginX;
 
-    // ✅ título
-    doc.setFont("helvetica", "bold");
-    doc.text(titulo, x, y);
-    y += lineHeight;
+  const mitad = Math.ceil(items.length / 2);
 
-    doc.setFont("helvetica", "normal");
+  const col1 = items.slice(0, mitad);
+  const col2 = items.slice(mitad);
 
-    let yStart = y; // guardar inicio de categoría
+  const x1 = marginX;
+  const x2 = marginX + colWidth;
 
-    items.forEach((i, index) => {
-      if (y > 280) {
-        if (col === 0) {
-          // ✅ pasar a columna derecha
-          col = 1;
-          x = marginX + colWidth;
-          y = yStart;
-        } else {
-          // ✅ nueva página y reset
-          doc.addPage();
-          col = 0;
-          x = marginX;
-          y = marginY;
-          yStart = y;
+  // ✅ título
+  doc.setFont("helvetica", "bold");
+  doc.text(titulo, x1, y);
+  y += lineHeight;
 
-          doc.setFont("helvetica", "bold");
-          doc.text(titulo, x, y);
-          y += lineHeight;
+  doc.setFont("helvetica", "normal");
 
-          doc.setFont("helvetica", "normal");
-        }
-      }
+  let y1 = y;
+  let y2 = y;
 
-      doc.text(`- ${i.producto} x${i.cantidad}`, x, y);
-      y += lineHeight;
-    });
+  col1.forEach(i => {
+    doc.text(`- ${i.producto} x${i.cantidad}`, x1, y1);
+    y1 += lineHeight;
+  });
 
-    // ✅ dejar espacio antes de próxima categoría
-    y = Math.max(y, yStart) + lineHeight * 2;
-  }
+  col2.forEach(i => {
+    doc.text(`- ${i.producto} x${i.cantidad}`, x2, y2);
+    y2 += lineHeight;
+  });
+
+  // ✅ avanzar al final más bajo de ambas columnas
+  y = Math.max(y1, y2) + lineHeight * 2;
+}
 
   renderCategoria("Alimentos:", alimentos);
   renderCategoria("Limpieza:", limpieza);
