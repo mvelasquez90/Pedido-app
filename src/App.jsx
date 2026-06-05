@@ -102,20 +102,25 @@ useEffect(() => {
 
   // ✅ autoselección
   
+
 useEffect(() => {
 
-  // ✅ Si está apagado → limpiar selección automática
+  // ✅ si está desactivado → limpiar todo
   if (!autoSeleccion) {
     setDatos({});
     return;
   }
 
+  // ✅ esperar datos de firebase
   if (!listas.length || !productos.length) return;
+
+  // ✅ NO pisar si el usuario ya seleccionó cosas
+  if (Object.keys(datos).length > 0) return;
 
   const frecuencia = obtenerFrecuenciaConsecutiva();
   const nuevoDatos = {};
 
-  productos.forEach(p => {
+  for (const p of productos) {
     if (frecuencia[p.nombre] >= 2) {
       nuevoDatos[p.id] = {
         producto: p.nombre,
@@ -123,11 +128,12 @@ useEffect(() => {
         cantidad: 1
       };
     }
-  });
+  }
 
   setDatos(nuevoDatos);
 
 }, [listas, productos, autoSeleccion]);
+
 
 function obtenerFrecuencia() {
   const contador = {};
@@ -328,6 +334,15 @@ async function guardarLista() {
 }
 
 
+function borrarSeleccion() {
+  if (confirm("¿Borrar toda la selección?")) {
+    setDatos({});
+    setOtros([]);
+  }
+}
+
+
+
 
 
 
@@ -423,6 +438,17 @@ if (!productos.find(
 
     };
   }
+  
+
+function enviarLista(lista) {
+  const texto = lista.items
+    .map(i => `${i.producto} x${i.cantidad}`)
+    .join("\n");
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`);
+
+}
+
 function obtenerFaltantesFrecuentes() {
   const frecuencia = obtenerFrecuenciaConsecutiva();
 
@@ -691,6 +717,8 @@ onClick={() => {
         <button style={btn(categoria==="limpieza")} onClick={()=>setCategoria("limpieza")}>🧼<br/>Limpieza</button>
         <button style={btn(categoria==="otros")} onClick={()=>setCategoria("otros")}>➕<br/> Otros</button>
         <button style={btn(categoria==="stats")} onClick={()=>setCategoria("stats")}>📊<br/> Stats</button>
+        <button style={btn(categoria==="listas")} onClick={() => setCategoria("listas")}>📁 <br/>Listas</button>
+
       </div>
 
       
@@ -699,27 +727,67 @@ onClick={() => {
         animation: "fadeSlide 0.25s ease"
       }}>
 
-        {categoria === "otros" ? (
-         
-<Otros
-  otros={otros}
-  setOtros={setOtros}
-  guardarProductos={guardarProductos}
-  devMode={devMode}
-/>
+        
+{categoria === "otros" ? (
+ 
+  <Otros
+    otros={otros}
+    setOtros={setOtros}
+    guardarProductos={guardarProductos}
+    devMode={devMode}
+  />
 
-        ) : categoria === "stats" ? (
-          <Estadisticas stats={stats} productos={productos} />
-        ) : (
-          <CategoryView
-            productos={productos}
-            categoria={categoria}
-            datos={datos}
-            setDatos={setDatos}
-            theme={theme}
-            devMode={devMode}
-          />
-        )}
+) : categoria === "stats" ? (
+  <Estadisticas stats={stats} productos={productos} />
+
+) : categoria === "listas" ? (
+
+  <div>
+    {listas.map(l => (
+      <div key={l.id} style={{
+        padding: 10,
+        marginBottom: 10,
+        background: theme.card,
+        borderRadius: 10
+      }}>
+
+        <b>{l.mes}/{l.anio}</b>
+
+        <div style={{ fontSize: 13, marginTop: 5 }}>
+          {l.items?.slice(0, 3).map(i => i.producto).join(", ")}
+          {l.items?.length > 3 && "..."}
+        </div>
+
+        <button
+          onClick={() => enviarLista(l)}
+          style={{
+            marginTop: 8,
+            padding: 6,
+            borderRadius: 6,
+            border: "none",
+            background: "#25D366",
+            color: "white",
+            cursor: "pointer"
+          }}
+        >
+          📩 Enviar
+        </button>
+
+      </div>
+    ))}
+  </div>
+
+) : (
+  <CategoryView
+    productos={productos}
+    categoria={categoria}
+    datos={datos}
+    setDatos={setDatos}
+    theme={theme}
+    devMode={devMode}
+  />
+)}
+
 
       </div>
 
@@ -743,6 +811,18 @@ onClick={() => {
   zIndex: 1000,      
   boxShadow: "0 -2px 10px rgba(0,0,0,0.2)"
 }}>
+
+<button style={actionBtn("#f44336")} onClick={borrarSeleccion}>
+  <span style={{
+    height: 22,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  }}>
+    🗑️
+  </span>
+  <span>Borrar</span>
+</button>
 
 
 
