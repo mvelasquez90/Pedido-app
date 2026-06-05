@@ -643,10 +643,52 @@ function agruparItemsPDF(items) {
 
   return { alimentos, limpieza, otros };
 }
-``
 
 
+function reutilizarLista(lista) {
+  const nuevoDatos = {};
+  const nuevosOtros = [];
 
+  lista.items.forEach(item => {
+
+    const prod = productos.find(
+      p => p.nombre.toLowerCase() === item.producto.toLowerCase()
+    );
+
+    if (prod) {
+      // ✅ existe → lo cargamos en datos
+      nuevoDatos[prod.id] = {
+        producto: item.producto,
+        checked: true,
+        cantidad: item.cantidad || 1,
+        comentario: item.comentario || ""
+      };
+    } else {
+      // ✅ no existe → va a "Otros"
+      nuevosOtros.push({
+        nombre: item.producto,
+        cantidad: item.cantidad || 1,
+        comentario: item.comentario || ""
+      });
+    }
+
+  });
+
+  setDatos(nuevoDatos);
+  setOtros(nuevosOtros);
+
+  setCategoria("alimentos");
+}
+
+
+function handleReutilizar(lista) {
+  const confirmar = window.confirm("¿Reutilizar esta lista?");
+
+  if (!confirmar) return;
+
+  reutilizarLista(lista);
+  toast.success("✅ Lista cargada");
+}
 
 
 function obtenerFaltantesFrecuentes() {
@@ -1005,8 +1047,20 @@ onClick={() => {
 >
   🗑️ Borrar
 </button>
-
-
+<button
+  onClick={() => reutilizarLista(l)}
+  style={{
+    flex: 1,
+    padding: 6,
+    borderRadius: 6,
+    border: "none",
+    background: "#FF9800",
+    color: "white",
+    cursor: "pointer"
+  }}
+>
+  🔄 Reutilizar
+</button>
 
 </div>
 
