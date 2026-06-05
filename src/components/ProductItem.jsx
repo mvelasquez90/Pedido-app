@@ -38,7 +38,10 @@ export default function ProductItem({
         minHeight: 36,              // ✅ filas alineadas
         background: data?.checked ? "#4CAF50" : "rgba(255,255,255,0.07)",
         border: "1px solid rgba(255,255,255,0.1)",
-        color: data?.checked ? "white" : "inherit"
+        color: data?.checked ? "white" : "inherit",
+        flexWrap: "nowrap",
+        overflow: "hidden",
+
       }}
     >
 
@@ -59,7 +62,7 @@ export default function ProductItem({
           value={editNombre}
           onChange={(e) => setEditNombre(e.target.value)}
           style={{
-            width: 120,
+            width: 100,
             height: 26,
             padding: "2px 4px",
             borderRadius: 6,
@@ -129,13 +132,16 @@ export default function ProductItem({
   placeholder="comentario"
   value={data?.comentario || ""}
   onChange={(e) => onChange("comentario", e.target.value)}
-  style={{
-    flex: 1,
-    minWidth: devMode ? 70 : 120,
-    maxWidth: devMode ? 120 : "none",
-    height: 26,
-    padding: "2px 6px",
-    borderRadius: 6,
+  
+style={{
+  flex: 1,
+  minWidth: 60,                         // ✅ más chico para mobile
+  maxWidth: devMode ? 120 : "45%",      // ✅ CLAVE 🔥
+
+  height: 26,
+  padding: "2px 6px",
+  borderRadius: 6,
+
 
     border:
       theme.background === "#121212"

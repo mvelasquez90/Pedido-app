@@ -291,19 +291,27 @@ if (!productos.find(
 
   return (
     
+
 <div style={{
-      width: "100%",         
-      maxWidth: 480,  
-      minWidth: 320,  
-      margin: "0 auto",
-      padding: 15,
-      paddingBottom:100,
-      fontFamily: "Arial",
-      background: theme.background,
-      color: theme.text,
-      minHeight: "100vh",
-      transition: "0.3s"
-    }}>
+  width: "100%",
+  maxWidth: 480,
+  minWidth: 320,
+  margin: "0 auto",
+  padding: 15,
+  paddingBottom: 100,
+  fontFamily: "Arial",
+
+  background: theme.background,
+  color: theme.text,
+  minHeight: "100vh",
+
+  transition: "0.3s",
+
+  // ✅ RESPONSIVE FIX
+  boxSizing: "border-box",
+  overflowX: "hidden"
+}}>
+
 
      
 {/* HEADER */}

@@ -35,20 +35,25 @@ export default function GraficoEstadisticas({ stats, productos }) {
       {/* 🍎 ALIMENTOS */}
       <h3>🍎 Alimentos</h3>
 
-      <div style={{ width: "100%", height: 250 }}>
+      <div style={{ width: "100%", height: 220 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={topAlimentos}
             layout="vertical"
-            margin={{ left: 20 }}
+            margin={{ left: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" />
             <YAxis
               dataKey="nombre"
               type="category"
-              width={100}
-              tick={{ fontSize: 12 }}   // ✅ texto más chico
+              width={80}
+              tick={{ fontSize: 11 }}   // ✅ texto más chico
+              
+tickFormatter={(value) =>
+          value.length > 10 ? value.slice(0, 10) + "…" : value
+        }
+
             />
             <Tooltip formatter={(v) => [`${v} veces`, "Cantidad"]} />
             <Bar dataKey="cantidad" fill="#4CAF50" />
@@ -65,15 +70,19 @@ export default function GraficoEstadisticas({ stats, productos }) {
           <BarChart
             data={topLimpieza}
             layout="vertical"
-            margin={{ left: 20 }}
+            margin={{ left: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" />
             <YAxis
               dataKey="nombre"
               type="category"
-              width={100}
-              tick={{ fontSize: 12 }}
+              width={80}
+              tick={{ fontSize: 11 }}
+              tickFormatter={(value) =>
+                  value.length > 10 ? value.slice(0, 10) + "…" : value
+}
+              
             />
             <Tooltip formatter={(v) => [`${v} veces`, "Cantidad"]} />
             <Bar dataKey="cantidad" fill="#2196F3" />
