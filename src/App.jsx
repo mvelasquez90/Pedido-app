@@ -942,7 +942,7 @@ onClick={() => {
   display: "flex",
   justifyContent: "space-between",
   gap: 8,
-  padding: 10,
+  padding: "6px 8px",
   background: theme.background,
   borderTop: "1px solid var(--border)",
   zIndex: 1000,      
