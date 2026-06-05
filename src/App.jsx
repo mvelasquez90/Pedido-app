@@ -503,21 +503,20 @@ function generarTexto() {
 
   function actionBtn(color) {
     return {
-      flex: "1 1 0",
-      maxWidth: "25%",
-      padding: 12,
+      flex: "0 0 auto",
+      padding: 8,
       borderRadius: 12,
       border: "none",
       background: color,
       color: "white",
-      fontSize: 13,
+      fontSize: 12,
       fontWeight: 600,  
       fontFamily: "var(--sans)", 
       display: "flex",
       flexDirection: "column",
       alignItems:"center",
       justifyContent:"center",
-      gap:4,
+      gap:2,
       letterSpacing: "-0.2px"
 
     };
@@ -941,7 +940,8 @@ onClick={() => {
   width: "100%",
   maxWidth: 480,
   display: "flex",
-  gap: 10,
+  justifyContent: "space-between",
+  gap: 8,
   padding: 10,
   background: theme.background,
   borderTop: "1px solid var(--border)",
