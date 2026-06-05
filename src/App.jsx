@@ -486,13 +486,16 @@ function generarTexto() {
   
   function btn(active) {
     return {
-      flex: 1,
-      padding: 12,
-      borderRadius: 14,
+      flex: "1 1 0",
+      minWidth: 0,
+      padding: "8px 4px",
+      borderRadius: 12,
       border: "none",
       background: active ? "#4CAF50" : theme.card,
       color: active ? "white" : theme.text,
-      fontSize: 13,
+      fontSize: 11,
+      textAlign: "center",
+      lineHeight: "1.2",
       transition: "0.2s",
       boxShadow: active
         ? "0 4px 10px rgba(0,0,0,0.2)"
@@ -810,7 +813,7 @@ onClick={() => {
 </div>
 
       {/* CATEGORÍAS */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 15 }}>        
+      <div style={{ display: "flex", gap: 6, marginBottom: 15, padding: "0 8px" }}>        
         <button style={btn(categoria==="alimentos")} onClick={()=>setCategoria("alimentos")}>🍎 <br/>Alimentos</button>
         <button style={btn(categoria==="limpieza")} onClick={()=>setCategoria("limpieza")}>🧼<br/>Limpieza</button>
         <button style={btn(categoria==="otros")} onClick={()=>setCategoria("otros")}>➕<br/> Otros</button>
