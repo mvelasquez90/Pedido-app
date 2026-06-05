@@ -105,8 +105,20 @@ export default function ProductItem({
 <input
   type="number"
   min="1"
-  value={data?.cantidad || 1}
-  onChange={(e) => onChange("cantidad", Number(e.target.value))}
+  value={data?.cantidad ?? ""}
+  
+onChange={(e) => {
+  const value = e.target.value;
+  onChange("cantidad", value === "" ? "" : Number(value));
+}}
+
+onBlur={(e) => {
+  if (e.target.value === "") {
+    onChange("cantidad", 1);
+  }
+}}
+
+
   style={{
     width: 36,
     height: 26,

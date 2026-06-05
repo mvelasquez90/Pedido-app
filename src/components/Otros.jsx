@@ -151,10 +151,18 @@ async function contarListas() {
           {/* Cantidad */}
           <input
             type="number"
-            value={o.cantidad}
-            onChange={(e) =>
-              actualizar(i, "cantidad", Number(e.target.value))
-            }
+            value={o.cantidad ?? ""}
+            
+            onChange={(e) => {
+            actualizar(i, "cantidad", value === "" ? "" : Number(value));  const value = e.target.value;
+            }}
+
+            onBlur={(e) => {
+              if (e.target.value === "") {
+                actualizar(i, "cantidad", 1);
+              }
+            }}
+
             style={{
               width: 45,
               padding: 3,
