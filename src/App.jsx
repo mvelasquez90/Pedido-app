@@ -112,7 +112,7 @@ useEffect(() => {
 
   if (!listas.length || !productos.length) return;
 
-  const frecuencia = obtenerFrecuencia();
+  const frecuencia = obtenerFrecuenciaConsecutiva();
   const nuevoDatos = {};
 
   productos.forEach(p => {
@@ -129,21 +129,77 @@ useEffect(() => {
 
 }, [listas, productos, autoSeleccion]);
 
+function obtenerFrecuencia() {
+  const contador = {};
 
-  function obtenerFrecuencia() {
-    const contador = {};
+  listas.forEach(l => {
+    if (!l?.items) return;
 
-    listas.forEach(l => {
-      if (!l?.items) return;
-
-      l.items.forEach(i => {
-        contador[i.producto] =
-          (contador[i.producto] || 0) + 1;
-      });
+    l.items.forEach(i => {
+      contador[i.producto] =
+        (contador[i.producto] || 0) + 1;
     });
+  });
 
-    return contador;
-  }
+  return contador;
+}
+
+
+  function obtenerFrecuenciaConsecutiva() {
+  const historial = {};
+
+  // ✅ agrupar por producto → lista de meses
+  listas.forEach(l => {
+    if (!l?.items) return;
+
+    const claveMes = `${l.anio}-${l.mes}`;
+
+    l.items.forEach(i => {
+      if (!historial[i.producto]) {
+        historial[i.producto] = [];
+      }
+
+      historial[i.producto].push(claveMes);
+    });
+  });
+
+  const consecutivos = {};
+
+  // ✅ calcular racha por producto
+  Object.entries(historial).forEach(([producto, meses]) => {
+
+    // ordenar meses
+    const ordenados = meses
+      .map(m => {
+        const [anio, mes] = m.split("-").map(Number);
+        return { anio, mes };
+      })
+      .sort((a, b) => a.anio * 12 + a.mes - (b.anio * 12 + b.mes));
+
+    let maxStreak = 1;
+    let actual = 1;
+
+    for (let i = 1; i < ordenados.length; i++) {
+      const prev = ordenados[i - 1];
+      const curr = ordenados[i];
+
+      const diff =
+        (curr.anio - prev.anio) * 12 + (curr.mes - prev.mes);
+
+      if (diff === 1) {
+        actual++;
+        maxStreak = Math.max(maxStreak, actual);
+      } else {
+        actual = 1;
+      }
+    }
+
+    consecutivos[producto] = maxStreak;
+  });
+
+  return consecutivos;
+}
+
 
   function generarEstadisticas() {
     const frecuencia = obtenerFrecuencia();
