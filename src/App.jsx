@@ -503,7 +503,8 @@ function generarTexto() {
 
   function actionBtn(color) {
     return {
-      flex: 1,
+      flex: "1 1 0",
+      maxWidth: "25%",
       padding: 12,
       borderRadius: 12,
       border: "none",
