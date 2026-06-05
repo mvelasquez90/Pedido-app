@@ -191,7 +191,11 @@ function generarTextoLista(items) {
   items.forEach(i => {
     const prod = productos.find(p => p.nombre === i.producto);
 
-    const linea = `- ${i.producto} x${i.cantidad}`;
+    
+const linea = i.comentario
+  ? `- ${i.producto} x${i.cantidad} (${i.comentario})`
+  : `- ${i.producto} x${i.cantidad}`;
+
 
     if (prod?.categoria === "alimentos") {
       alimentos.push(linea);
