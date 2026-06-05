@@ -49,7 +49,18 @@ export default function ProductItem({
       <input
         type="checkbox"
         checked={data?.checked || false}
-        onChange={(e) => onChange("checked", e.target.checked)}
+        
+onChange={(e) => {
+  const checked = e.target.checked;
+
+  onChange("checked", checked);
+
+  // ✅ si marca → pone 1 automáticamente
+  if (checked && !data?.cantidad) {
+    onChange("cantidad", 1);
+  }
+}}
+
         style={{
           margin: 0,
           transform: "scale(0.9)"   // ✅ más chico
@@ -102,23 +113,26 @@ export default function ProductItem({
 
       {/* Cantidad */}
       
+
 <input
-  type="number"
-  min="1"
+  type="1"  type="number"
   value={data?.cantidad ?? ""}
-  
-onChange={(e) => {
-  const value = e.target.value;
-  onChange("cantidad", value === "" ? "" : Number(value));
-}}
-
-onBlur={(e) => {
-  if (e.target.value === "") {
-    onChange("cantidad", 1);
-  }
-}}
-
-
+  onChange={(e) => {
+    const value = e.target.value;
+    onChange("cantidad", value === "" ? "" : Number(value));
+  }}
+  onFocus={(e) => {
+    // ✅ cuando entrás al input → limpia si es 1
+    if (e.target.value === "1") {
+      onChange("cantidad", "");
+    }
+  }}
+  onBlur={(e) => {
+    // ✅ si lo dejás vacío → vuelve a 1
+    if (e.target.value === "") {
+      onChange("cantidad", 1);
+    }
+  }}
   style={{
     width: 36,
     height: 26,

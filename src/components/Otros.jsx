@@ -148,29 +148,39 @@ async function contarListas() {
 />
 
 
-          {/* Cantidad */}
-          <input
-            type="number"
-            value={o.cantidad ?? ""}
-            
-            onChange={(e) => {
-            actualizar(i, "cantidad", value === "" ? "" : Number(value));  const value = e.target.value;
-            }}
+          
+{/* Cantidad */}
+<input
+  type="number"
+  value={o.cantidad ?? ""}
 
-            onBlur={(e) => {
-              if (e.target.value === "") {
-                actualizar(i, "cantidad", 1);
-              }
-            }}
+  onChange={(e) => {
+    const value = e.target.value;
+    actualizar(i, "cantidad", value === "" ? "" : Number(value));
+  }}
 
-            style={{
-              width: 45,
-              padding: 3,
-              borderRadius: 6,
-              fontSize: 13,
-              boxSizing: "border-box"
-            }}
-          />
+  onFocus={(e) => {
+    // ✅ borra el 1 automáticamente cuando entrás
+    if (e.target.value === "1") {
+      actualizar(i, "cantidad", "");
+    }
+  }}
+
+  onBlur={(e) => {
+    if (e.target.value === "") {
+      actualizar(i, "cantidad", 1);
+    }
+  }}
+
+  style={{
+    width: 45,
+    padding: 3,
+    borderRadius: 6,
+    fontSize: 13,
+    boxSizing: "border-box"
+  }}
+/>
+
 
           {/* Comentario */}
           <input
