@@ -192,7 +192,7 @@ function generarTextoLista(items) {
     const prod = productos.find(p => p.nombre === i.producto);
 
     
-const linea = i.comentario
+const linea = i.comentario && i.comentario.trim() !== ""
   ? `- ${i.producto} x${i.cantidad} (${i.comentario})`
   : `- ${i.producto} x${i.cantidad}`;
 
