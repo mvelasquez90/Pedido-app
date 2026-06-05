@@ -539,12 +539,89 @@ function enviarLista(lista) {
 function generarPDFLista(lista) {
   const doc = new jsPDF();
 
-  const texto = generarTextoLista(lista.items);
+  const marginX = 10;
+  const marginY = 10;
+  const lineHeight = 6;
 
-  doc.text(texto, 10, 10);
+  const colWidth = 90;
+
+  let y = marginY;
+
+  const { alimentos, limpieza, otros } = agruparItemsPDF(lista.items);
+
+  function renderCategoria(titulo, items) {
+    if (!items.length) return;
+
+    let col = 0; // 0 = izquierda, 1 = derecha
+    let x = marginX;
+
+    // ✅ título
+    doc.setFont("helvetica", "bold");
+    doc.text(titulo, x, y);
+    y += lineHeight;
+
+    doc.setFont("helvetica", "normal");
+
+    let yStart = y; // guardar inicio de categoría
+
+    items.forEach((i, index) => {
+      if (y > 280) {
+        if (col === 0) {
+          // ✅ pasar a columna derecha
+          col = 1;
+          x = marginX + colWidth;
+          y = yStart;
+        } else {
+          // ✅ nueva página y reset
+          doc.addPage();
+          col = 0;
+          x = marginX;
+          y = marginY;
+          yStart = y;
+
+          doc.setFont("helvetica", "bold");
+          doc.text(titulo, x, y);
+          y += lineHeight;
+
+          doc.setFont("helvetica", "normal");
+        }
+      }
+
+      doc.text(`- ${i.producto} x${i.cantidad}`, x, y);
+      y += lineHeight;
+    });
+
+    // ✅ dejar espacio antes de próxima categoría
+    y = Math.max(y, yStart) + lineHeight * 2;
+  }
+
+  renderCategoria("Alimentos:", alimentos);
+  renderCategoria("Limpieza:", limpieza);
+  renderCategoria("Otros:", otros);
 
   doc.save(`lista-${lista.mes}-${lista.anio}.pdf`);
 }
+
+function agruparItemsPDF(items) {
+  const alimentos = [];
+  const limpieza = [];
+  const otros = [];
+
+  items.forEach(i => {
+    const prod = productos.find(p => p.nombre === i.producto);
+
+    if (prod?.categoria === "alimentos") {
+      alimentos.push(i);
+    } else if (prod?.categoria === "limpieza") {
+      limpieza.push(i);
+    } else {
+      otros.push(i);
+    }
+  });
+
+  return { alimentos, limpieza, otros };
+}
+``
 
 
 
