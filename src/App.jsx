@@ -588,7 +588,15 @@ function generarPDFLista(lista) {
 
   let y = marginY;
 
-  const { alimentos, limpieza, otros } = agruparItemsPDF(lista.items);
+  
+const itemsNormalizados = lista.items.map(i => ({
+  producto: i.producto,
+  cantidad: i.cantidad || 1,
+  comentario: i.comentario || ""
+}));
+
+const { alimentos, limpieza, otros } = agruparItemsPDF(itemsNormalizados);
+
 
  function renderCategoria(titulo, items) {
   if (!items.length) return;
