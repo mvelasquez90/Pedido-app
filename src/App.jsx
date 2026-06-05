@@ -60,6 +60,35 @@ useEffect(() => {
 useEffect(() => {
   localStorage.setItem("autoSel", autoSeleccion);
 }, [autoSeleccion]);
+useEffect(() => {
+  if (!otros.length) return;
+
+  setDatos(prev => {
+    const nuevo = { ...prev };
+
+    otros.forEach(o => {
+      if (!o.nombre) return;
+
+      const prodExistente = productos.find(
+        p => p.nombre.toLowerCase() === o.nombre.toLowerCase()
+      );
+
+      if (prodExistente) {
+        // ✅ ya existe → asignar al ID correcto
+        nuevo[prodExistente.id] = {
+          producto: o.nombre,
+          checked: true,
+          cantidad: o.cantidad || 1,
+          comentario: o.comentario || ""
+        };
+      }
+    });
+
+    return nuevo;
+  });
+
+}, [otros, productos]);
+``
 
 
   // ✅ TEMA
