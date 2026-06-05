@@ -145,60 +145,74 @@ function obtenerFrecuencia() {
 }
 
 
-  function obtenerFrecuenciaConsecutiva() {
-  const historial = {};
-
-  // ✅ agrupar por producto → lista de meses
+ 
+function obtenerFrecuenciaConsecutiva() {
+   const historial = {};
   listas.forEach(l => {
     if (!l?.items) return;
 
     const claveMes = `${l.anio}-${l.mes}`;
 
     l.items.forEach(i => {
+
+      // ✅ crear array si no existe
       if (!historial[i.producto]) {
         historial[i.producto] = [];
       }
 
-      historial[i.producto].push(claveMes);
+      // ✅ evitar duplicados del mismo mes
+      if (!historial[i.producto].includes(claveMes)) {
+        historial[i.producto].push(claveMes);
+      }
+
     });
   });
 
   const consecutivos = {};
 
   // ✅ calcular racha por producto
-  Object.entries(historial).forEach(([producto, meses]) => {
+  
+Object.entries(historial).forEach(([producto, meses]) => {
 
-    // ordenar meses
-    const ordenados = meses
-      .map(m => {
-        const [anio, mes] = m.split("-").map(Number);
-        return { anio, mes };
-      })
-      .sort((a, b) => a.anio * 12 + a.mes - (b.anio * 12 + b.mes));
+  const ordenados = meses
+    .map(m => {
+      const [anio, mes] = m.split("-").map(Number);
+      return { anio, mes };
+    })
+    .sort((a, b) => a.anio * 12 + a.mes - (b.anio * 12 + b.mes));
 
-    let maxStreak = 1;
-    let actual = 1;
+  // ✅ caso simple (solo aparece 1 vez)
+  if (ordenados.length === 1) {
+    consecutivos[producto] = 1;
+    return;
+  }
 
-    for (let i = 1; i < ordenados.length; i++) {
-      const prev = ordenados[i - 1];
-      const curr = ordenados[i];
+  let maxStreak = 1;
+  let actual = 1;
 
-      const diff =
-        (curr.anio - prev.anio) * 12 + (curr.mes - prev.mes);
+  for (let i = 1; i < ordenados.length; i++) {
+    const prev = ordenados[i - 1];
+    const curr = ordenados[i];
 
-      if (diff === 1) {
-        actual++;
-        maxStreak = Math.max(maxStreak, actual);
-      } else {
-        actual = 1;
-      }
+    const diff =
+      (curr.anio - prev.anio) * 12 + (curr.mes - prev.mes);
+
+    if (diff === 1) {
+      actual++;
+      maxStreak = Math.max(maxStreak, actual);
+    } else {
+      actual = 1;
     }
+  }
 
-    consecutivos[producto] = maxStreak;
-  });
+  consecutivos[producto] = maxStreak;
+});
+
 
   return consecutivos;
 }
+ 
+
 
 
   function generarEstadisticas() {
@@ -243,14 +257,78 @@ function obtenerFrecuencia() {
 
 
 async function guardar() {
-  const lista = { mes, anio, items: generarLista() };
+
+ const faltantes = obtenerFaltantesFrecuentes();
+  if (faltantes.length > 0) {
+    toast((t) => (
+      <div>
+        🤖 Productos que comprás seguido:
+        <br />
+
+        {faltantes.slice(0, 3).map(p => (
+          <div key={p.id}>• {p.nombre}</div>
+        ))}
+
+        {faltantes.length > 3 && (
+          <div>y {faltantes.length - 3} más...</div>
+        )}
+        
+<div style={{ fontSize: 12, marginTop: 5 }}>
+  {faltantes.length} sugeridos no seleccionados
+</div>
+
+
+        <br />
+
+        <button
+          onClick={async () => {
+            await guardarLista();
+            toast.dismiss(t.id);
+          }}
+          
+style={{
+    padding: "6px 10px",
+    borderRadius: 6,
+    border: "none",
+    background: "#4CAF50",
+    color: "white",
+    marginRight: 6,
+    cursor: "pointer"
+  }}
+
+        >
+          ✅ Guardar igual
+        </button>
+
+        <button onClick={() => toast.dismiss(t.id)}>
+          🔄 Revisar
+        </button>
+      </div>
+    ));
+
+    return; // ⛔ cortar ejecución
+  }
+
+  // ✅ si no hay faltantes → guardar directo
+  await guardarLista();
+}
+
+async function guardarLista() {
+  const lista = {
+    mes,
+    anio,
+    fecha: new Date(),
+    items: generarLista()
+  };
 
   await addDoc(collection(db, "listas"), lista);
 
   setOtros([]);
-
-  alert("✅ Guardado");
+  toast.success("✅ Guardado");
 }
+
+
+
 
 
 async function guardarProductos() {
@@ -272,7 +350,8 @@ if (!productos.find(
 
       setDatos(prev => ({
         ...prev,
-        [p.nombre]: {
+        
+        [p.id]: {
           producto: p.nombre,
           checked: true,
           cantidad: p.cantidad || 1,
@@ -344,6 +423,28 @@ if (!productos.find(
 
     };
   }
+function obtenerFaltantesFrecuentes() {
+  const frecuencia = obtenerFrecuenciaConsecutiva();
+
+  // productos que deberían estar sugeridos
+  const sugeridos = productos.filter(
+    p => frecuencia[p.nombre] >= 2
+  );
+
+  // productos que el usuario ya seleccionó
+  const seleccionados = Object.values(datos)
+    .filter(d => d?.checked)
+    .map(d => d.producto.toLowerCase());
+
+  // filtrar los que faltan
+  
+const faltantes = sugeridos.filter(
+  p => !seleccionados.includes(p.nombre.toLowerCase())
+);
+
+
+  return faltantes;
+}
 
   return (
     

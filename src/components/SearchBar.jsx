@@ -24,9 +24,20 @@ export default function SearchBar({ value, onChange }) {
         placeholder="Buscar producto..."
         onChange={e => onChange(e.target.value)}
 
-        onFocus={e => {
-          e.target.style.boxShadow = "0 0 0 2px #4CAF50";
-        }}
+        
+onFocus={(e) => {
+  // ✅ borde verde
+  e.target.style.boxShadow = "0 0 0 2px #4CAF50";
+
+  // ✅ scroll automático
+  setTimeout(() => {
+    e.target.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }, 300);
+}}
+
 
         onBlur={e => {
           e.target.style.boxShadow = "none";
