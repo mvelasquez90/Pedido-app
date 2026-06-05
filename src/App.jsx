@@ -449,6 +449,17 @@ function enviarLista(lista) {
 
 }
 
+function generarPDFLista(lista) {
+  const doc = new jsPDF();
+
+  const texto = lista.items
+    .map(i => `${i.producto} x${i.cantidad}`)
+    .join("\n");
+
+  doc.text(texto, 10, 10);
+  doc.save(`lista-${lista.mes}-${lista.anio}.pdf`);
+}
+
 function obtenerFaltantesFrecuentes() {
   const frecuencia = obtenerFrecuenciaConsecutiva();
 
@@ -758,20 +769,40 @@ onClick={() => {
           {l.items?.length > 3 && "..."}
         </div>
 
-        <button
-          onClick={() => enviarLista(l)}
-          style={{
-            marginTop: 8,
-            padding: 6,
-            borderRadius: 6,
-            border: "none",
-            background: "#25D366",
-            color: "white",
-            cursor: "pointer"
-          }}
-        >
-          📩 Enviar
-        </button>
+<div style={{ display: "flex", gap: 6, marginTop: 8 }}>
+
+  <button
+    onClick={() => enviarLista(l)}
+    style={{
+      flex: 1,
+      padding: 6,
+      borderRadius: 6,
+      border: "none",
+      background: "#25D366",
+      color: "white",
+      cursor: "pointer"
+    }}
+  >
+    📩 Enviar
+  </button>
+
+  <button
+    onClick={() => generarPDFLista(l)}
+    style={{
+      flex: 1,
+      padding: 6,
+      borderRadius: 6,
+      border: "none",
+      background: "#2196F3",
+      color: "white",
+      cursor: "pointer"
+    }}
+  >
+    📄 PDF
+  </button>
+
+</div>
+
 
       </div>
     ))}
