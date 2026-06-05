@@ -531,16 +531,16 @@ function enviarLista(lista) {
 
 
 
-
-
-
 function generarPDFLista(lista) {
-  const doc = new jsTextoLista(lista.items);  const doc = new jsPDF();
+  const doc = new jsPDF();
+
+  const texto = generarTextoLista(lista.items);
 
   doc.text(texto, 10, 10);
 
   doc.save(`lista-${lista.mes}-${lista.anio}.pdf`);
 }
+
 
 
 
