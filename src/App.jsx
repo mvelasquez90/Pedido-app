@@ -724,6 +724,21 @@ function handleReutilizar(lista) {
   toast.success("✅ Lista cargada");
 }
 
+function formatearFecha(fecha) {
+  if (!fecha) return "";
+
+  const f = fecha.toDate ? fecha.toDate() : new Date(fecha);
+
+  const dia = String(f.getDate()).padStart(2, "0");
+  const mes = String(f.getMonth() + 1).padStart(2, "0");
+  const anio = f.getFullYear();
+
+  const hora = String(f.getHours()).padStart(2, "0");
+  const min = String(f.getMinutes()).padStart(2, "0");
+
+  return `${dia}/${mes}/${anio} - ${hora}:${min}`;
+}
+
 
 function obtenerFaltantesFrecuentes() {
   const frecuencia = obtenerFrecuenciaConsecutiva();
@@ -1027,7 +1042,13 @@ onClick={() => {
         borderRadius: 10
       }}>
 
-        <b>{l.mes}/{l.anio}</b>
+        
+<div style={{ fontSize: 14 }}>
+  <b>
+    {l.mes}/{l.anio} — {formatearFecha(l.fecha)}
+  </b>
+</div>
+
 
         <div style={{ fontSize: 13, marginTop: 5 }}>
           {l.items?.slice(0, 3).map(i => i.producto).join(", ")}
