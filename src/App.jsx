@@ -152,9 +152,12 @@ function obtenerFrecuencia() {
 }
 
 
+
 function generarTextoLista(items) {
- const limpieza = [];  const alimentos = [];
+  const alimentos = [];
+  const limpieza = [];
   const otros = [];
+
 
   items.forEach(i => {
     const prod = productos.find(p => p.nombre === i.producto);
@@ -381,8 +384,7 @@ function borrarSeleccion() {
 
 
 
-async 
-function eliminarLista(id) {
+async function eliminarLista(id) {
   toast((t) => (
     <div>
       ¿Eliminar esta lista?
