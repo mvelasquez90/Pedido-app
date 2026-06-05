@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import { FaWhatsapp } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { collection, addDoc, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, deleteDoc, doc} from "firebase/firestore";
 import { db } from "./services/firebase";
 import { Toaster } from "react-hot-toast";
 import toast from "react-hot-toast";
@@ -135,6 +135,7 @@ useEffect(() => {
 }, [listas, productos, autoSeleccion]);
 
 
+
 function obtenerFrecuencia() {
   const contador = {};
 
@@ -149,6 +150,43 @@ function obtenerFrecuencia() {
 
   return contador;
 }
+
+
+function generarTextoLista(items) {
+ const limpieza = [];  const alimentos = [];
+  const otros = [];
+
+  items.forEach(i => {
+    const prod = productos.find(p => p.nombre === i.producto);
+
+    const linea = `- ${i.producto} x${i.cantidad}`;
+
+    if (prod?.categoria === "alimentos") {
+      alimentos.push(linea);
+    } else if (prod?.categoria === "limpieza") {
+      limpieza.push(linea);
+    } else {
+      otros.push(linea);
+    }
+  });
+
+  let texto = "";
+
+  if (alimentos.length) {
+    texto += "Alimentos:\n" + alimentos.join("\n") + "\n\n";
+  }
+
+  if (limpieza.length) {
+    texto += "Limpieza:\n" + limpieza.join("\n") + "\n\n";
+  }
+
+  if (otros.length) {
+    texto += "Otros:\n" + otros.join("\n") + "\n\n";
+  }
+
+  return texto.trim();
+}
+
 
 
  
@@ -343,6 +381,49 @@ function borrarSeleccion() {
 
 
 
+async 
+function eliminarLista(id) {
+  toast((t) => (
+    <div>
+      ¿Eliminar esta lista?
+      <br /><br />
+
+      <button
+        onClick={async () => {
+          await deleteDoc(doc(db, "listas", id));
+          toast.dismiss(t.id);
+          toast.success("🗑️ Lista eliminada");
+        }}
+        style={{
+          marginRight: 6,
+          padding: "6px 10px",
+          borderRadius: 6,
+          border: "none",
+          background: "#f44336",
+          color: "white",
+          cursor: "pointer"
+        }}
+      >
+        ✅ Sí
+      </button>
+
+      <button
+        onClick={() => toast.dismiss(t.id)}
+        style={{
+          padding: "6px 10px",
+          borderRadius: 6,
+          border: "none",
+          background: "#ccc",
+          cursor: "pointer"
+        }}
+      >
+        ❌ Cancelar
+      </button>
+    </div>
+  ));
+}
+
+
 
 
 
@@ -383,11 +464,11 @@ if (!productos.find(
 
 
 
-  function generarTexto() {
-    return generarLista()
-      .map(i => `${i.producto} x${i.cantidad}`)
-      .join("\n");
-  }
+  
+function generarTexto() {
+  return generarTextoLista(generarLista());
+}
+
 
   function compartir() {
     window.open(`https://wa.me/?text=${encodeURIComponent(generarTexto())}`);
@@ -440,25 +521,29 @@ if (!productos.find(
   }
   
 
+
+
 function enviarLista(lista) {
-  const texto = lista.items
-    .map(i => `${i.producto} x${i.cantidad}`)
-    .join("\n");
+  const texto = generarTextoLista(lista.items);
 
   window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`);
-
 }
+
+
+
+
+
 
 function generarPDFLista(lista) {
-  const doc = new jsPDF();
-
-  const texto = lista.items
-    .map(i => `${i.producto} x${i.cantidad}`)
-    .join("\n");
+  const doc = new jsTextoLista(lista.items);  const doc = new jsPDF();
 
   doc.text(texto, 10, 10);
+
   doc.save(`lista-${lista.mes}-${lista.anio}.pdf`);
 }
+
+
+
 
 function obtenerFaltantesFrecuentes() {
   const frecuencia = obtenerFrecuenciaConsecutiva();
@@ -800,6 +885,24 @@ onClick={() => {
   >
     📄 PDF
   </button>
+  
+
+<button
+  onClick={() => eliminarLista(l.id)}
+  style={{
+    flex: 1,
+    padding: 6,
+    borderRadius: 6,
+    border: "none",
+    background: "#f44336",
+    color: "white",
+    cursor: "pointer"
+  }}
+>
+  🗑️ Borrar
+</button>
+
+
 
 </div>
 
